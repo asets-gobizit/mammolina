@@ -633,6 +633,7 @@ p {
   gap: 4.2rem;
   align-items: center;
   max-width: 1200px;
+  overflow: visible;
 }
 
 .home-model-intro {
@@ -673,6 +674,7 @@ p {
 .home-model-image-wrap {
   position: relative;
   justify-self: center;
+  z-index: 1;
 }
 
 .home-model-image-wrap img {
@@ -685,6 +687,8 @@ p {
 }
 
 .home-model-items {
+  position: relative;
+  z-index: 3;
   display: grid;
   gap: 5.4rem;
 }
@@ -698,6 +702,8 @@ p {
 }
 
 .home-model-icon {
+  position: relative;
+  z-index: 4;
   display: grid;
   width: 106px;
   height: 106px;
