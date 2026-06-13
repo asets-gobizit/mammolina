@@ -1,0 +1,12 @@
+---
+import { localize } from '@lib/i18n';
+import type { Locale, Person } from '@lib/types';
+
+const { person, locale } = Astro.props as { person: Person; locale: Locale };
+---
+<article class="person">
+  <img src={person.image} alt={person.name} />
+  <h3>{person.name}</h3>
+  <p class="eyebrow">{localize(person.role, locale)}</p>
+  <p>{localize(person.bio, locale)}</p>
+</article>

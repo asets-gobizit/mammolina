@@ -1,0 +1,99 @@
+---
+import { localizedPath, ui } from '@lib/i18n';
+import type { Locale, SiteSettings } from '@lib/types';
+
+const { locale, settings } = Astro.props as { locale: Locale; settings: SiteSettings };
+const labels = ui[locale];
+---
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-content">
+      <div class="footer-wordmark" aria-label="Mammolina Montessori International School">
+        <span>Mammolina</span>
+        <strong>MONTESSORI</strong>
+        <small>INTERNATIONAL SCHOOL</small>
+      </div>
+      <nav class="footer-nav" aria-label="Footer navigation">
+        <a href={localizedPath(locale, locale === 'es' ? '/nuestra-escuela' : '/our-school')}>{labels.navAbout}</a>
+        <a href={localizedPath(locale, '/services')}>{locale === 'es' ? 'Otros programas' : 'Other programs'}</a>
+        <a href={localizedPath(locale, locale === 'es' ? '/comunidad' : '/community')}>{labels.navBlog}</a>
+        <a href={localizedPath(locale, locale === 'es' ? '/proceso-de-admision-y-matricula' : '/admission-and-enrollment-process')}>{locale === 'es' ? 'Admisiones' : 'Admissions'}</a>
+        <a href={localizedPath(locale, locale === 'es' ? '/contacto' : '/contact')}>{labels.navContact}</a>
+        <a href={localizedPath(locale === 'es' ? 'en' : 'es', '/')}>{locale === 'es' ? 'EN' : 'ES'}</a>
+      </nav>
+      <p class="footer-description">{settings.description}</p>
+      <div class="footer-accreditations" aria-label="Accreditations">
+        <span class="gva-mark">
+          GENERALITAT<br />VALENCIANA
+          <small>Conselleria d'Educacio,<br />Cultura i Esport</small>
+        </span>
+        <img src="/images/neasc-live.webp" alt="NEASC accredited" />
+      </div>
+      <div class="footer-socials" aria-label="Social links">
+        <a href={settings.social.instagram} aria-label="X">X</a>
+        <a href={settings.social.facebook} aria-label="Facebook">f</a>
+        <a href={settings.social.instagram} aria-label="Instagram">&#9678;</a>
+      </div>
+      <nav class="footer-legal-nav" aria-label="Legal links">
+        <a href="/aviso-legal/">Aviso legal</a>
+        <span>-</span>
+        <a href="/politica-de-privacidad/">Politica de privacidad</a>
+        <span>-</span>
+        <a href="/politica-de-cookies/">Politica de cookies</a>
+        <span>-</span>
+        <button type="button" data-cookie-panel-open>Panel Cookies</button>
+      </nav>
+    </div>
+  </div>
+</footer>
+<div class="footer-bottom-credit">
+  <div class="container">
+    &copy;2026 Mammolina Montessori - Todos los derechos reservados | Built by
+    <a href="https://www.gobizit.ai/" target="_blank" rel="noopener noreferrer">GoBizIT.ai</a>
+  </div>
+</div>
+<div class="cookie-panel" data-cookie-panel hidden>
+  <div class="cookie-panel-backdrop" data-cookie-panel-close></div>
+  <section class="cookie-panel-dialog" role="dialog" aria-modal="true" aria-labelledby="cookie-panel-title">
+    <button class="cookie-panel-back" type="button" data-cookie-panel-close>Volver atras</button>
+    <h2 id="cookie-panel-title">Consentimiento de Cookies</h2>
+    <div class="cookie-panel-actions">
+      <button type="button" data-cookie-panel-close>Aceptar todas</button>
+      <button type="button" data-cookie-panel-close>Rechazar todas</button>
+    </div>
+    <div class="cookie-panel-options">
+      <label>
+        <input type="checkbox" checked disabled />
+        <span>No precisan consentimiento<br /><small>Cookies tecnicas y funcionales</small></span>
+      </label>
+      <label>
+        <input type="checkbox" checked />
+        <span>Google Analytics</span>
+      </label>
+    </div>
+    <button class="cookie-panel-save" type="button" data-cookie-panel-close>Guardar configuracion</button>
+    <p class="cookie-panel-powered">Powered by <strong>Mammolina Montessori School</strong></p>
+  </section>
+</div>
+
+<script>
+  const cookiePanel = document.querySelector('[data-cookie-panel]');
+  const cookieOpeners = document.querySelectorAll('[data-cookie-panel-open]');
+  const cookieClosers = document.querySelectorAll('[data-cookie-panel-close]');
+
+  cookieOpeners.forEach((button) => {
+    button.addEventListener('click', () => {
+      if (cookiePanel instanceof HTMLElement) {
+        cookiePanel.hidden = false;
+      }
+    });
+  });
+
+  cookieClosers.forEach((button) => {
+    button.addEventListener('click', () => {
+      if (cookiePanel instanceof HTMLElement) {
+        cookiePanel.hidden = true;
+      }
+    });
+  });
+</script>

@@ -1,0 +1,48 @@
+---
+import Header from '@components/Header.astro';
+import Footer from '@components/Footer.astro';
+import { contentProvider } from '@lib/contentProvider';
+import { normalizeLocale } from '@lib/i18n';
+import type { SeoData } from '@lib/types';
+import '@styles/global.css';
+
+const {
+  title,
+  description,
+  seo,
+  locale = 'es',
+  path = '/'
+} = Astro.props;
+
+const normalizedLocale = normalizeLocale(locale);
+const settings = await contentProvider.getSiteSettings();
+const meta: SeoData = {
+  ...settings.seo,
+  title: title ?? seo?.title ?? settings.seo.title,
+  description: description ?? seo?.description ?? settings.seo.description,
+  ...seo
+};
+const canonical = meta.canonicalUrl ?? new URL(path, Astro.site ?? 'https://mammolinamontessori.com').toString();
+---
+<!doctype html>
+<html lang={normalizedLocale}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{meta.title}</title>
+    <meta name="description" content={meta.description} />
+    <link rel="canonical" href={canonical} />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={meta.ogTitle ?? meta.title} />
+    <meta property="og:description" content={meta.ogDescription ?? meta.description} />
+    {meta.ogImage && <meta property="og:image" content={new URL(meta.ogImage, Astro.site ?? 'https://mammolinamontessori.com').toString()} />}
+  </head>
+  <body>
+    <Header locale={normalizedLocale} settings={settings} />
+    <main>
+      <slot />
+    </main>
+    <Footer locale={normalizedLocale} settings={settings} />
+  </body>
+</html>

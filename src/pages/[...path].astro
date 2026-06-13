@@ -1,0 +1,778 @@
+---
+import PostCard from '@components/PostCard.astro';
+import ProgramCard from '@components/ProgramCard.astro';
+import TeamCard from '@components/TeamCard.astro';
+import BaseLayout from '@layouts/BaseLayout.astro';
+import { contentProvider } from '@lib/contentProvider';
+import { localize, localizedPath, normalizeLocale, ui } from '@lib/i18n';
+import type { BlogPost, Page, Service } from '@lib/types';
+
+const pageAliases: Record<string, string> = {
+  about: 'nuestra-escuela',
+  'our-school': 'nuestra-escuela',
+  'what-is-montessori': 'que-es-montessori',
+  'neasc-accreditation': 'acreditacion-neasc',
+  'neuroscience-psychology-of-montessori': 'neurociencia-y-psicologia-de-montessori',
+  'cosmic-education-montessori': 'educacion-cosmica-en-montessori',
+  team: 'equipo',
+  'extracurricular-activities': 'actividades-extraescolares',
+  community: 'comunidad',
+  'parent-association': 'la-asociacion-de-padres-y-madres',
+  'montessori-silent-journey': 'el-silent-journey-montessori',
+  'international-school-valencia': 'colegio-internacional-valencia',
+  contacto: 'contact',
+  'admission-and-enrollment-process': 'proceso-de-admision-y-matricula',
+  'hours-and-fees': 'horarios-y-tarifas',
+  faqs: 'preguntas-frecuentes',
+  'useful-links': 'enlaces-utiles',
+  'privacy-policy': 'politica-de-privacidad',
+  terms: 'terminos-y-condiciones'
+};
+
+const schoolSlugs = [
+  'nuestra-escuela',
+  'que-es-montessori',
+  'acreditacion-neasc',
+  'neurociencia-y-psicologia-de-montessori',
+  'educacion-cosmica-en-montessori',
+  'equipo'
+];
+
+export async function getStaticPaths() {
+  const services = await contentProvider.getServices();
+  const posts = await contentProvider.getBlogPosts();
+  const basePaths = [
+    '',
+    'about',
+    'nuestra-escuela',
+    'our-school',
+    'que-es-montessori',
+    'what-is-montessori',
+    'acreditacion-neasc',
+    'neasc-accreditation',
+    'neurociencia-y-psicologia-de-montessori',
+    'neuroscience-psychology-of-montessori',
+    'educacion-cosmica-en-montessori',
+    'cosmic-education-montessori',
+    'equipo',
+    'team',
+    'actividades-extraescolares',
+    'extracurricular-activities',
+    'comunidad',
+    'community',
+    'la-asociacion-de-padres-y-madres',
+    'parent-association',
+    'el-silent-journey-montessori',
+    'montessori-silent-journey',
+    'colegio-internacional-valencia',
+    'international-school-valencia',
+    'aviso-legal',
+    'politica-de-privacidad',
+    'politica-de-cookies',
+    'terminos-y-condiciones',
+    'terms-and-conditions',
+    'services',
+    'blog',
+    'contact',
+    'contacto',
+    'proceso-de-admision-y-matricula',
+    'admission-and-enrollment-process',
+    'horarios-y-tarifas',
+    'hours-and-fees',
+    'preguntas-frecuentes',
+    'faqs',
+    'enlaces-utiles',
+    'useful-links',
+    'privacy-policy',
+    'terms',
+    ...services.map((service) => `services/${service.slug}`),
+    ...posts.map((post) => `blog/${post.slug}`)
+  ];
+
+  const paths = [...basePaths, ...basePaths.filter(Boolean).map((item) => `en/${item}`)];
+  paths.push('en');
+  return paths.map((item) => ({ params: { path: item || undefined } }));
+}
+
+const rawPath = Astro.params.path ?? '';
+const segments = rawPath.split('/').filter(Boolean);
+const locale = normalizeLocale(segments[0] === 'en' ? 'en' : 'es');
+const routeSegments = locale === 'en' ? segments.slice(1) : segments;
+const routePath = routeSegments.join('/');
+const routeSlug = routePath || 'home';
+
+const [home, services, posts, people, settings] = await Promise.all([
+  contentProvider.getHomePage(),
+  contentProvider.getServices(),
+  contentProvider.getBlogPosts(),
+  contentProvider.getPeople(),
+  contentProvider.getSiteSettings()
+]);
+
+const outdoorSlides = [
+  {
+    title: { es: 'Children’s House', en: 'Children’s House' },
+    age: { es: '3 a 6 años', en: '3 to 6 years' },
+    slides: [
+      {
+        image: '/images/outdoor-child-1-live.jpg',
+        text: {
+          es: 'La etapa de la mente absorbente y de la auto creación',
+          en: 'The stage of the absorbent mind and self-creation'
+        }
+      },
+      {
+        image: '/images/outdoor-child-2-live.jpg',
+        text: {
+          es: 'Guía de habla inglesa e introducción al francés',
+          en: 'English-speaking guide and introduction to French'
+        }
+      },
+      {
+        image: '/images/outdoor-child-3-live.jpg',
+        text: {
+          es: 'Una hora al día durante el tiempo de juego libre en el jardín con una asistente de habla española y también actividad física y canciones en español todos los viernes con la misma asistente',
+          en: 'One hour a day of free play in the garden with a Spanish-speaking assistant, plus physical activity and songs in Spanish every Friday'
+        }
+      },
+      {
+        image: '/images/outdoor-child-4-live.avif',
+        text: {
+          es: 'En estos primeros años los niños y niñas absorben el lenguaje espontáneamente del entorno y de los otros niños y niñas con los que interactúan',
+          en: 'In these first years children absorb language spontaneously from the environment and the other children around them'
+        }
+      },
+      {
+        image: '/images/outdoor-child-5-live.avif',
+        text: {
+          es: 'Un ambiente preparado donde los niños se mueven con libertad y eligen sus materiales y zonas de trabajo',
+          en: 'A prepared environment where children move freely and choose their materials and work areas'
+        }
+      },
+      {
+        image: '/images/outdoor-child-6-live.jpg',
+        text: {
+          es: 'Las grandes áreas de trabajo son: Matemáticas, Sensorial, Lenguaje, Cultura y Vida Práctica',
+          en: 'The major work areas are Mathematics, Sensorial, Language, Culture and Practical Life'
+        }
+      }
+    ]
+  },
+  {
+    title: { es: 'Primary', en: 'Primary' },
+    age: { es: '6 a 12 años', en: '6 to 12 years' },
+    slides: [
+      {
+        image: '/images/outdoor-primary-1-live.jpg',
+        text: {
+          es: 'La etapa del razonamiento, la imaginación, la adquisición de la cultura y el desarrollo intelectual y moral',
+          en: 'The stage of reasoning, imagination, acquisition of culture, and intellectual and moral development'
+        }
+      },
+      {
+        image: '/images/outdoor-primary-2-live.jpg',
+        text: {
+          es: 'Guía de habla inglesa, guía de habla francesa y un 20% de horas de currículo español y valenciano',
+          en: 'English-speaking guide, French-speaking guide, and 20% of curriculum hours in Spanish and Valencian'
+        }
+      },
+      {
+        image: '/images/outdoor-primary-3-live.jpg',
+        text: {
+          es: 'Se generan espacios para experimentación e investigación. Se camina hacía la abstracción a través de los materiales',
+          en: 'Spaces are created for experimentation and research. Children move toward abstraction through materials'
+        }
+      },
+      {
+        image: '/images/outdoor-primary-4-live.jpg',
+        text: {
+          es: 'El trabajo es autónomo, interdisciplinar y responsable con el propio desarrollo',
+          en: 'Work is autonomous, interdisciplinary, and responsible for one’s own development'
+        }
+      }
+    ]
+  }
+];
+
+let view: 'home' | 'services' | 'service' | 'blog' | 'post' | 'page' = 'page';
+let service: Service | undefined;
+let post: BlogPost | undefined;
+let page: Page | undefined;
+
+if (routeSlug === 'home') {
+  view = 'home';
+} else if (routePath === 'services') {
+  view = 'services';
+} else if (routeSegments[0] === 'services' && routeSegments[1]) {
+  view = 'service';
+  service = services.find((item) => item.slug === routeSegments[1]);
+} else if (routePath === 'blog') {
+  view = 'blog';
+} else if (routeSegments[0] === 'blog' && routeSegments[1]) {
+  view = 'post';
+  post = posts.find((item) => item.slug === routeSegments[1]);
+} else {
+  const pageSlug = pageAliases[routeSlug] ?? routeSlug;
+  page = await contentProvider.getPageBySlug(pageSlug);
+  view = 'page';
+}
+
+const seoSlug = view === 'home' ? 'home' : service?.slug ?? post?.slug ?? page?.slug ?? routeSlug;
+const seo = await contentProvider.getSeoData(seoSlug, locale);
+const labels = ui[locale];
+const pageBody = page ? localize(page.body, locale) : [];
+const title = page ? localize(page.title, locale) : '';
+const faqPairs = pageBody.reduce<{ question: string; answer: string }[]>((pairs, item, index) => {
+  if (index % 2 === 0) pairs.push({ question: item, answer: pageBody[index + 1] ?? '' });
+  return pairs;
+}, []);
+const admissionSteps = pageBody.slice(16).reduce<{ title: string; body: string }[]>((steps, item, index, source) => {
+  if (index % 2 === 0) steps.push({ title: item, body: source[index + 1] ?? '' });
+  return steps;
+}, []);
+---
+<BaseLayout title={seo.title} description={seo.description} seo={seo} locale={locale} path={`/${rawPath}`}>
+  {view === 'home' && (
+    <>
+      <section class="hero">
+        <div class="hero-slide" style="background-image: url('/images/hero-montessori-valencia.jpg'); background-position: center center;"></div>
+        <div class="hero-slide" style="background-image: url('/images/montessori-garden.jpg'); background-position: center center;"></div>
+        <div class="hero-slide" style="background-image: url('/images/hero-garden-2.jpg'); background-position: center 44%;"></div>
+        <div class="hero-content">
+          <p class="eyebrow">{labels.school}</p>
+          <h1 set:html={`${localize(home.headline, locale)}<br><b><u>${labels.school}</u></b>`} />
+          <h2>{labels.school}</h2>
+          <p>{localize(home.subheadline, locale)}</p>
+          <a class="hero-scroll" href="#home-intro" aria-label={locale === 'es' ? 'Bajar' : 'Scroll down'}>&#8595;</a>
+        </div>
+      </section>
+
+      <section id="home-intro" class="home-why section white">
+        <div class="container home-two-column">
+          <div class="home-why-copy">
+            <div class="section-header">
+              <p class="eyebrow">{labels.whyUs}</p>
+              <h2>{localize(home.whyTitle, locale)}</h2>
+              <p>{localize(home.whyBody, locale)}</p>
+            </div>
+            <div class="highlight-grid">
+              {home.highlights.map((item) => <div class="highlight">{localize(item, locale)}</div>)}
+            </div>
+          </div>
+          <div class="home-essence-card">
+            <p class="eyebrow">{labels.aboutUs}</p>
+            <h2>{localize(home.essenceTitle, locale)}</h2>
+            <span class="red-rule"></span>
+            <p>{localize(home.essenceBody, locale)}</p>
+            <a class="button" href={localizedPath(locale, locale === 'es' ? '/nuestra-escuela' : '/our-school')}>{locale === 'es' ? 'Saber mas' : 'Learn more'}</a>
+            <img class="feature-image" src="/images/essence-children.avif" alt={locale === 'es' ? 'Ninos trabajando en el huerto' : 'Children working in the garden'} />
+          </div>
+        </div>
+      </section>
+      <section class="home-nature section white">
+        <div class="container split nature-split">
+          <img class="feature-image" src="/images/exterior-general-7b.jpg" alt={localize(home.outdoorTitle, locale)} />
+          <div>
+            <h2>{localize(home.outdoorTitle, locale)}</h2>
+            <p>{localize(home.outdoorBody, locale)}</p>
+            <p>{locale === 'es' ? 'De acuerdo con el metodo Montessori, las experiencias de aprendizaje al aire libre fomentan la independencia, la autoestima y una actitud positiva hacia el aprendizaje.' : 'In line with the Montessori method, outdoor learning experiences foster independence, self-esteem and a positive attitude toward learning.'}</p>
+            <p>{locale === 'es' ? 'En nuestro huerto los ninos se inician en la observacion de los fenomenos de la vida, practican la espera y desarrollan el sentimiento de confianza en la naturaleza.' : 'In our vegetable garden, children begin observing the phenomena of life, practice waiting and develop trust in nature.'}</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="team" class="section white home-team-section">
+        <div class="container">
+          <div class="section-header home-team-header">
+            <p class="eyebrow">{labels.team}</p>
+            <h2>{labels.team}</h2>
+          </div>
+          <div class="team-grid home-team-carousel" data-team-carousel>
+            {people.map((person) => <TeamCard person={person} locale={locale} />)}
+          </div>
+          <div class="team-carousel-dots" aria-label={locale === 'es' ? 'Navegacion del equipo' : 'Team navigation'} data-team-carousel-dots>
+            {people.map((person, index) => (
+              <button
+                type="button"
+                class={index === 2 ? 'active' : ''}
+                aria-label={`${locale === 'es' ? 'Ver' : 'Show'} ${person.name}`}
+                data-team-dot={index}
+              ></button>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section class="home-model section white">
+        <div class="container home-model-layout">
+          <div class="home-model-intro">
+            <h2>{labels.educationalModel}</h2>
+            <span class="red-rule"></span>
+            <h3>{locale === 'es' ? 'Es Montessori' : 'It is Montessori'}</h3>
+            <p>{locale === 'es' ? 'La educacion como ayuda a la vida del ser humano. Montessori busca responder a las necesidades del nino segun sus diferentes etapas de desarrollo en un ambiente preparado.' : 'Education as an aid to human life. Montessori responds to the needs of the child through each stage of development in a prepared environment.'}</p>
+          </div>
+          <div class="home-model-image-wrap">
+            <img src="/images/exterior-general-7b.jpg" alt={locale === 'es' ? 'Jardin de Mammolina Montessori' : 'Mammolina Montessori garden'} />
+          </div>
+          <div class="home-model-items">
+            <article class="home-model-item">
+              <span class="home-model-icon" aria-hidden="true">
+                <svg viewBox="0 0 48 48" focusable="false">
+                  <path d="M19 7c-4.2 0-7.5 3.4-7.5 7.5v.6A7.5 7.5 0 0 0 7 22v1.5A7.5 7.5 0 0 0 11.6 30 7 7 0 0 0 18.5 39H22V7h-3Zm10 0h-3v32h3.5a7 7 0 0 0 6.9-9A7.5 7.5 0 0 0 41 23.5V22a7.5 7.5 0 0 0-4.5-6.9v-.6C36.5 10.4 33.2 7 29 7Z" />
+                </svg>
+              </span>
+              <div>
+                <h3>{locale === 'es' ? 'Neurociencia' : 'Neuroscience'}</h3>
+                <p>{locale === 'es' ? 'Respalda y apoya nuestra actividad educativa. Nos ayuda a comprender y a actuar de manera mas consciente.' : 'It supports our educational work and helps us understand and act more consciously.'}</p>
+              </div>
+            </article>
+            <article class="home-model-item">
+              <span class="home-model-icon" aria-hidden="true">
+                <svg viewBox="0 0 48 48" focusable="false">
+                  <circle cx="24" cy="24" r="18" fill="none" stroke="currentColor" stroke-width="5" />
+                  <path d="M16 28c2.3 4 5.1 5.8 8 5.8s5.7-1.8 8-5.8" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="4" />
+                  <circle cx="18" cy="20" r="2.8" />
+                  <circle cx="30" cy="20" r="2.8" />
+                </svg>
+              </span>
+              <div>
+                <h3>{locale === 'es' ? 'Emociones' : 'Emotions'}</h3>
+                <p>{locale === 'es' ? 'Es parte esencial del metodo que favorece el bienestar emocional como elemento indispensable del desarrollo integral.' : 'An essential part of the method, supporting emotional wellbeing as part of holistic development.'}</p>
+              </div>
+            </article>
+            <article class="home-model-item">
+              <span class="home-model-icon" aria-hidden="true">
+                <svg viewBox="0 0 48 48" focusable="false">
+                  <circle cx="24" cy="10" r="5.5" />
+                  <path d="M10 19c4.2 2.4 8.8 3.6 14 3.6S33.8 21.4 38 19" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="5" />
+                  <path d="M24 22v18M16 40l8-18 8 18" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="5" />
+                </svg>
+              </span>
+              <div>
+                <h3>{locale === 'es' ? 'Disciplina Positiva' : 'Positive Discipline'}</h3>
+                <p>{locale === 'es' ? 'El nino como protagonista de su vida. Educar desde la firmeza, la amabilidad y el respeto mutuo.' : 'The child is the protagonist of life, educated with firmness, kindness and mutual respect.'}</p>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+      <section class="home-outdoor-work">
+        <div class="outdoor-work-hero">
+          <h2>{locale === 'es' ? 'Amplios espacios para trabajar al aire libre' : 'Large spaces for outdoor work'}</h2>
+        </div>
+        <div class="container outdoor-programs">
+          {outdoorSlides.map((item) => (
+            <article class="outdoor-program-card" data-outdoor-slider>
+              <header>
+                <h3>{localize(item.title, locale)}</h3>
+                <p>{localize(item.age, locale)}</p>
+              </header>
+              <div class="outdoor-slider-frame">
+                {item.slides.map((slide, index) => (
+                  <div class={`outdoor-slide ${index === 0 ? 'active' : ''}`} data-outdoor-slide>
+                    <img src={slide.image} alt="" />
+                    <p>{localize(slide.text, locale)}</p>
+                  </div>
+                ))}
+                <div class="outdoor-slider-dots" aria-label="Program slides">
+                  {item.slides.map((_, index) => (
+                    <button class={index === 0 ? 'active' : ''} type="button" aria-label={`Go to slide ${index + 1}`} data-outdoor-dot></button>
+                  ))}
+                </div>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+      <section class="home-values-live">
+        <div class="container">
+          <h2>{locale === 'es' ? 'Nuestros valores' : 'Our values'}</h2>
+          <img src="/images/values-live.jpg" alt={locale === 'es' ? 'Nuestros valores' : 'Our values'} />
+        </div>
+      </section>
+    </>
+  )}
+
+  {view === 'services' && (
+    <>
+      <section class="page-hero">
+        <div class="container">
+          <p class="eyebrow">{labels.educationalModel}</p>
+          <h1>{labels.services}</h1>
+        </div>
+      </section>
+      <section class="section white">
+        <div class="container program-grid">
+          {services.map((item) => <ProgramCard service={item} locale={locale} />)}
+        </div>
+      </section>
+    </>
+  )}
+
+  {view === 'service' && service && (
+    <>
+      <section class="page-hero">
+        <div class="container">
+          <p class="eyebrow">{localize(service.ageRange, locale)}</p>
+          <h1>{localize(service.title, locale)}</h1>
+          <p>{localize(service.summary, locale)}</p>
+        </div>
+      </section>
+      <section class="section white">
+        <div class="container split">
+          <div class="content">
+            <ul>
+              {localize(service.details, locale).map((item) => <li>{item}</li>)}
+            </ul>
+            <a class="button" href={localizedPath(locale, '/contact')}>{labels.contactCta}</a>
+          </div>
+          {service.image && <img class="feature-image" src={service.image} alt={localize(service.title, locale)} />}
+        </div>
+      </section>
+    </>
+  )}
+
+  {view === 'blog' && (
+    <>
+      <section class="page-hero">
+        <div class="container">
+          <p class="eyebrow">{labels.navBlog}</p>
+          <h1>{labels.blog}</h1>
+        </div>
+      </section>
+      <section class="section white">
+        <div class="container post-grid">
+          {posts.map((item) => <PostCard post={item} locale={locale} />)}
+        </div>
+      </section>
+    </>
+  )}
+
+  {view === 'post' && post && (
+    <>
+      <section class="page-hero">
+        <div class="container">
+          <p class="eyebrow">{new Date(post.publishedAt).toLocaleDateString(locale === 'es' ? 'es-ES' : 'en-US')}</p>
+          <h1>{localize(post.title, locale)}</h1>
+          <p>{localize(post.excerpt, locale)}</p>
+        </div>
+      </section>
+      <section class="section white">
+        <div class="container content">
+          {post.image && <img class="feature-image" src={post.image} alt={localize(post.title, locale)} />}
+          {localize(post.body, locale).map((paragraph) => <p>{paragraph}</p>)}
+        </div>
+      </section>
+    </>
+  )}
+
+  {view === 'page' && page && (
+    page.slug === 'contact' ? (
+      <>
+        <section class="contact-hero">
+          <div class="container contact-hero-grid">
+            <div class="contact-socials">
+              <a href={settings.social.instagram}>Instagram</a>
+              <a href={settings.social.facebook}>Facebook-f</a>
+            </div>
+            <div class="contact-copy">
+              <h1>{locale === 'es' ? 'Contáctanos' : 'Contact us'}</h1>
+              <p>{localize(page.summary, locale)}</p>
+              {localize(page.body, locale).slice(0, 2).map((paragraph) => <p>{paragraph}</p>)}
+              <div class="contact-info-list">
+                <a href={`mailto:${settings.email}`}>{settings.email}</a>
+                <a href={`tel:${settings.phone.replaceAll(' ', '')}`}>{settings.phone}</a>
+                <span>{settings.address}</span>
+              </div>
+              <p>
+                {localize(page.body, locale)[2]}{' '}
+                <a class="inline-link" href={localizedPath(locale, '/proceso-de-admision-y-matricula')}>
+                  {locale === 'es' ? 'nuestra misión y enfoque Montessori' : 'our mission and Montessori approach'}
+                </a>
+              </p>
+            </div>
+          </div>
+        </section>
+        <section class="section white">
+          <div class="container">
+            <h2>{locale === 'es' ? 'Reserva tu visita' : 'Book your visit'}</h2>
+            <div class="booking-frame">
+              <iframe src="https://meet.brevo.com/cristina-cort/borderless" title={locale === 'es' ? 'Reserva tu visita' : 'Book your visit'} loading="lazy"></iframe>
+            </div>
+          </div>
+        </section>
+        <section class="section sage">
+          <div class="container">
+            <h2>{locale === 'es' ? 'Ubicación' : 'Location'}</h2>
+            <div class="map-frame">
+              <iframe
+                loading="lazy"
+                src="https://maps.google.com/maps?q=Mammolina%20Montessori%20International%20School&t=m&z=12&output=embed&iwloc=near"
+                title="Mammolina Montessori International School"
+                aria-label="Mammolina Montessori International School"></iframe>
+            </div>
+          </div>
+        </section>
+      </>
+    ) : page.slug === 'proceso-de-admision-y-matricula' ? (
+      <>
+        <section class="admissions-process-page">
+          <div class="container admissions-process-grid">
+            <article class="admissions-before">
+              <h1>{pageBody[0]}</h1>
+              <span class="red-rule"></span>
+              <p>{localize(page.summary, locale)}</p>
+              <p><strong>{pageBody[1].split('.')[0]}.</strong>{pageBody[1].replace(pageBody[1].split('.')[0] + '.', '')}</p>
+              <p><strong>{locale === 'es' ? 'Estos puntos abajo quieren ofrecerte una primera aproximación a nuestra filosofía' : 'The points below offer an initial introduction to our philosophy'}</strong>{locale === 'es' ? ' y ayudarte a comprender mejor lo que experimentarás cuando visites nuestras aulas.' : ' and help you understand what you will experience when you visit our classrooms.'}</p>
+              <nav class="admission-anchor-list" aria-label={localize(page.title, locale)}>
+                <a href="#mission">{pageBody[2]} <span>›</span></a>
+                <a href="#foundations">{pageBody[4]} <span>›</span></a>
+                <a href="#observe">{pageBody[11]} <span>›</span></a>
+                <a href="#reflection">{pageBody[13]} <span>›</span></a>
+              </nav>
+            </article>
+            <article class="admissions-steps">
+              <h2>{pageBody[15]}</h2>
+              <div class="step-list">
+                {admissionSteps.map((step, index) => (
+                  <div class="step-row">
+                    <span class="step-arrow">→</span>
+                    <div>
+                      <h3>{step.title}</h3>
+                      <p>{step.body}</p>
+                      {index === 2 && <a href={localizedPath(locale, '/contact')}>{locale === 'es' ? 'Criterios de admisión' : 'Admission criteria'}</a>}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </article>
+          </div>
+        </section>
+        <section class="admissions-detail-section">
+          <div class="container admissions-detail-grid">
+            <article id="mission">
+              <h2>{pageBody[2]}</h2>
+              <p>{pageBody[3]}</p>
+            </article>
+            <article id="foundations">
+              <h2>{pageBody[4]}</h2>
+              {pageBody.slice(5, 11).map((item) => <p>{item}</p>)}
+            </article>
+            <article id="observe">
+              <h2>{pageBody[11]}</h2>
+              <p>{pageBody[12]}</p>
+            </article>
+            <article id="reflection">
+              <h2>{pageBody[13]}</h2>
+              <p>{pageBody[14]}</p>
+            </article>
+          </div>
+        </section>
+      </>
+    ) : page.slug === 'horarios-y-tarifas' ? (
+      <>
+        <section class="fees-page">
+          <div class="container fees-grid">
+            <article class="fees-intro">
+              <h1>{localize(page.title, locale)}</h1>
+              <p>{localize(page.summary, locale)} {locale === 'es' ? 'Creemos que la educación no consiste sólo en enseñar conocimientos, sino en alimentar el potencial y la curiosidad de tu hijo/a e inculcarle el amor por el aprendizaje para toda la vida.' : 'We believe education is not only about teaching knowledge, but nourishing your child potential and curiosity.'}</p>
+              <h2>{pageBody[0]}</h2>
+              <address>
+                <a href={`tel:${settings.phone.replaceAll(' ', '')}`}>{settings.phone}</a>
+                <a href={`mailto:${settings.email}`}>{settings.email}</a>
+                <span>Carrer 608, nº9. 46182 Montecañada, Paterna. Valencia, España</span>
+              </address>
+            </article>
+            <article class="fees-prices">
+              <p>{pageBody[2]} {locale === 'es' ? 'En nuestro caso ofrecemos un entorno y nivel educativo que son únicos.' : 'In our case we offer an environment and educational level that are unique.'}</p>
+              {pageBody.slice(3).map((item) => {
+                const isHeading = item.includes('House') || item.includes('Primary') || item.startsWith('Cuota') || item.startsWith('Servicios') || item.startsWith('Admission') || item.startsWith('Complementary');
+                return isHeading ? <h2>{item}</h2> : <p class={item.includes('€') ? 'fee-line' : ''}>{item}</p>;
+              })}
+            </article>
+          </div>
+          <div class="container">
+            <img class="fees-image" src="/images/hero-exterior.jpg" alt={localize(page.title, locale)} />
+          </div>
+        </section>
+      </>
+    ) : page.slug === 'preguntas-frecuentes' ? (
+      <section class="faq-page">
+        <div class="container">
+          <h1>{localize(page.title, locale)}</h1>
+          <span class="red-rule"></span>
+          <p>{localize(page.summary, locale)} {locale === 'es' ? 'Además, te dejamos a continuación las preguntas más comunes para resolver cualquier duda que tengas.' : 'Below are the most common questions to help resolve any doubts you may have.'}</p>
+          <div class="faq-list">
+            {faqPairs.map((item) => (
+              <details>
+                <summary>{item.question}<span>›</span></summary>
+                <p>{item.answer}</p>
+              </details>
+            ))}
+          </div>
+        </div>
+      </section>
+    ) : page.slug === 'enlaces-utiles' ? (
+      <section class="links-page">
+        <div class="container">
+          <h1>{localize(page.title, locale)}</h1>
+          <span class="red-rule"></span>
+          <p class="lead">{localize(page.summary, locale)}</p>
+          <div class="links-list">
+            {pageBody.map((paragraph) => paragraph.endsWith(':') ? <h2>{paragraph}</h2> : <p>{paragraph}</p>)}
+          </div>
+        </div>
+      </section>
+    ) : schoolSlugs.includes(page.slug) ? (
+      <>
+        <section class={`school-reference-page ${page.slug === 'equipo' ? 'team-reference-page' : ''}`}>
+          <div class="container school-reference-grid">
+            <article class="school-reference-copy">
+              <h1>{localize(page.title, locale)}</h1>
+              <span class="red-rule"></span>
+              <p class="lead">{localize(page.summary, locale)}</p>
+              {page.slug !== 'equipo' && pageBody.map((paragraph) => {
+                const isHeading = paragraph.length < 90 && !paragraph.endsWith('.') && !paragraph.includes(': ');
+                return isHeading ? <h2>{paragraph}</h2> : <p>{paragraph}</p>;
+              })}
+            </article>
+            {page.slug !== 'equipo' && page.heroImage && (
+              <aside class="school-reference-media">
+                <img src={page.heroImage} alt={localize(page.title, locale)} />
+                {page.slug === 'acreditacion-neasc' && <img src="/images/neasc-cycle.png" alt="NEASC accreditation cycle" />}
+              </aside>
+            )}
+          </div>
+          {page.slug === 'equipo' && (
+            <div class="container team-page-grid">
+              {people.map((person) => <TeamCard person={person} locale={locale} />)}
+            </div>
+          )}
+        </section>
+      </>
+    ) : (
+      <>
+        <section class="page-hero">
+          <div class="container">
+            <p class="eyebrow">{title}</p>
+            <h1>{localize(page.title, locale)}</h1>
+            <p>{localize(page.summary, locale)}</p>
+          </div>
+        </section>
+        <section class="section white">
+          <div class="container split">
+            <div class="content">
+              {localize(page.body, locale).map((paragraph) => <p>{paragraph}</p>)}
+            </div>
+            {page.heroImage && <img class="feature-image" src={page.heroImage} alt={localize(page.title, locale)} />}
+          </div>
+        </section>
+      </>
+    )
+  )}
+</BaseLayout>
+
+<script>
+  const setupTeamCarousel = () => {
+    const carousel = document.querySelector('[data-team-carousel]');
+    const dots = Array.from(document.querySelectorAll('[data-team-dot]'));
+
+    if (!(carousel instanceof HTMLElement) || dots.length === 0) return;
+
+    const cards = Array.from(carousel.querySelectorAll('.person')).filter((card) => card instanceof HTMLElement);
+    if (cards.length === 0) return;
+
+    const setActive = (index) => {
+      dots.forEach((dot, dotIndex) => dot.classList.toggle('active', dotIndex === index));
+    };
+
+    const activeIndexFromScroll = () => {
+      const carouselRect = carousel.getBoundingClientRect();
+      const center = carouselRect.left + carouselRect.width / 2;
+      let activeIndex = 0;
+      let nearestDistance = Number.POSITIVE_INFINITY;
+
+      cards.forEach((card, index) => {
+        const rect = card.getBoundingClientRect();
+        const distance = Math.abs(rect.left + rect.width / 2 - center);
+        if (distance < nearestDistance) {
+          nearestDistance = distance;
+          activeIndex = index;
+        }
+      });
+
+      setActive(activeIndex);
+    };
+
+    dots.forEach((dot, index) => {
+      dot.addEventListener('click', () => {
+        cards[index]?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+        setActive(index);
+      });
+    });
+
+    let isDragging = false;
+    let startX = 0;
+    let startScrollLeft = 0;
+
+    carousel.addEventListener('pointerdown', (event) => {
+      if (event.pointerType === 'mouse' && event.button !== 0) return;
+      isDragging = true;
+      startX = event.clientX;
+      startScrollLeft = carousel.scrollLeft;
+      carousel.classList.add('is-dragging');
+      carousel.setPointerCapture(event.pointerId);
+    });
+
+    carousel.addEventListener('pointermove', (event) => {
+      if (!isDragging) return;
+      carousel.scrollLeft = startScrollLeft - (event.clientX - startX);
+    });
+
+    const stopDragging = (event) => {
+      if (!isDragging) return;
+      isDragging = false;
+      carousel.classList.remove('is-dragging');
+      carousel.releasePointerCapture(event.pointerId);
+      activeIndexFromScroll();
+    };
+
+    carousel.addEventListener('pointerup', stopDragging);
+    carousel.addEventListener('pointercancel', stopDragging);
+    carousel.addEventListener('scroll', () => window.requestAnimationFrame(activeIndexFromScroll), { passive: true });
+
+    window.requestAnimationFrame(() => {
+      const initialCard = cards[2];
+      if (initialCard instanceof HTMLElement) {
+        carousel.scrollLeft = initialCard.offsetLeft - (carousel.clientWidth - initialCard.clientWidth) / 2;
+      }
+      activeIndexFromScroll();
+    });
+  };
+
+  setupTeamCarousel();
+  
+  const setupOutdoorSliders = () => {
+    document.querySelectorAll('[data-outdoor-slider]').forEach((slider) => {
+      const slides = Array.from(slider.querySelectorAll('[data-outdoor-slide]'));
+      const dots = Array.from(slider.querySelectorAll('[data-outdoor-dot]'));
+      if (slides.length === 0 || dots.length === 0) return;
+
+      let activeIndex = 0;
+
+      const setActive = (index) => {
+        activeIndex = (index + slides.length) % slides.length;
+        slides.forEach((slide, slideIndex) => slide.classList.toggle('active', slideIndex === activeIndex));
+        dots.forEach((dot, dotIndex) => dot.classList.toggle('active', dotIndex === activeIndex));
+      };
+
+      dots.forEach((dot, index) => {
+        dot.addEventListener('click', () => setActive(index));
+      });
+
+      window.setInterval(() => setActive(activeIndex + 1), 5000);
+    });
+  };
+
+  setupOutdoorSliders();
+</script>

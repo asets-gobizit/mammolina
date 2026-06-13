@@ -1,0 +1,12 @@
+---
+import { localize, localizedPath } from '@lib/i18n';
+import type { Locale, Service } from '@lib/types';
+
+const { service, locale } = Astro.props as { service: Service; locale: Locale };
+---
+<article class="program">
+  {service.image && <img src={service.image} alt={localize(service.title, locale)} />}
+  <p class="eyebrow">{localize(service.ageRange, locale)}</p>
+  <h3><a href={localizedPath(locale, `/services/${service.slug}`)}>{localize(service.title, locale)}</a></h3>
+  <p>{localize(service.summary, locale)}</p>
+</article>

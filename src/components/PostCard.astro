@@ -1,0 +1,12 @@
+---
+import { localize, localizedPath } from '@lib/i18n';
+import type { BlogPost, Locale } from '@lib/types';
+
+const { post, locale } = Astro.props as { post: BlogPost; locale: Locale };
+---
+<article class="post-card">
+  {post.image && <img src={post.image} alt={localize(post.title, locale)} />}
+  <p class="eyebrow">{new Date(post.publishedAt).toLocaleDateString(locale === 'es' ? 'es-ES' : 'en-US')}</p>
+  <h3><a href={localizedPath(locale, `/blog/${post.slug}`)}>{localize(post.title, locale)}</a></h3>
+  <p>{localize(post.excerpt, locale)}</p>
+</article>

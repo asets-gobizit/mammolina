@@ -1,0 +1,73 @@
+---
+import { localizedPath, ui } from '@lib/i18n';
+import type { Locale, SiteSettings } from '@lib/types';
+
+const { locale, settings } = Astro.props as { locale: Locale; settings: SiteSettings };
+const labels = ui[locale];
+const otherLocale = locale === 'es' ? 'en' : 'es';
+---
+<header class="site-header">
+  <div class="container nav">
+    <a class="brand" href={localizedPath(locale, '/')} aria-label="Mammolina Montessori">
+      <img src={settings.logo} alt="Mammolina Montessori" />
+    </a>
+    <nav class="nav-links" aria-label="Primary navigation">
+      <div class="nav-item">
+        <a href={localizedPath(locale, locale === 'es' ? '/nuestra-escuela' : '/our-school')}>{labels.navAbout}</a>
+        <div class="dropdown">
+          <a href={localizedPath(locale, locale === 'es' ? '/nuestra-escuela' : '/our-school')}>{labels.navAbout}</a>
+          <a href={localizedPath(locale, locale === 'es' ? '/que-es-montessori' : '/what-is-montessori')}>{locale === 'es' ? '¿Qué es Montessori?' : 'What is Montessori?'}</a>
+          <a href={localizedPath(locale, locale === 'es' ? '/acreditacion-neasc' : '/neasc-accreditation')}>{locale === 'es' ? 'Acreditación NEASC' : 'NEASC Accreditation'}</a>
+          <a href={localizedPath(locale, locale === 'es' ? '/neurociencia-y-psicologia-de-montessori' : '/neuroscience-psychology-of-montessori')}>{locale === 'es' ? 'La Neurociencia y la Psicología detrás de Montessori' : 'Neuroscience and psychology behind Montessori'}</a>
+          <a href={localizedPath(locale, locale === 'es' ? '/educacion-cosmica-en-montessori' : '/cosmic-education-montessori')}>{locale === 'es' ? 'Educación Cósmica en Montessori' : 'Cosmic Education in Montessori'}</a>
+        </div>
+      </div>
+      <div class="nav-item">
+        <a href={localizedPath(locale, locale === 'es' ? '/actividades-extraescolares' : '/extracurricular-activities')}>{locale === 'es' ? 'Otros programas' : 'Other programs'}</a>
+        <div class="dropdown">
+          <a href={localizedPath(locale, locale === 'es' ? '/actividades-extraescolares' : '/extracurricular-activities')}>{locale === 'es' ? 'Actividades Extraescolares' : 'Extracurricular Activities'}</a>
+        </div>
+      </div>
+      <div class="nav-item">
+        <a href={localizedPath(locale, locale === 'es' ? '/comunidad' : '/community')}>{labels.navBlog}</a>
+        <div class="dropdown">
+          <a href={localizedPath(locale, locale === 'es' ? '/equipo' : '/team')}>{locale === 'es' ? 'Equipo' : 'Team'}</a>
+          <a href={localizedPath(locale, locale === 'es' ? '/la-asociacion-de-padres-y-madres' : '/parent-association')}>{locale === 'es' ? 'La Asociación de Padres y Madres de Mammolina' : 'Mammolina Parent Association'}</a>
+          <a href={localizedPath(locale, locale === 'es' ? '/el-silent-journey-montessori' : '/montessori-silent-journey')}>Silent Journey Montessori</a>
+        </div>
+      </div>
+      <div class="nav-item">
+        <a href={localizedPath(locale, locale === 'es' ? '/contacto' : '/contact')}>{locale === 'es' ? 'Admisiones' : 'Admissions'}</a>
+        <div class="dropdown">
+          <a href={localizedPath(locale, locale === 'es' ? '/proceso-de-admision-y-matricula' : '/admission-and-enrollment-process')}>{locale === 'es' ? 'Proceso de admisión y matrícula' : 'Admissions and enrollment process'}</a>
+          <a href={localizedPath(locale, locale === 'es' ? '/horarios-y-tarifas' : '/hours-and-fees')}>{locale === 'es' ? 'Horarios y tarifas' : 'Timetables and fees'}</a>
+          <a href={localizedPath(locale, locale === 'es' ? '/preguntas-frecuentes' : '/faqs')}>{locale === 'es' ? 'Preguntas frecuentes' : 'Frequently asked questions'}</a>
+          <a href={localizedPath(locale, locale === 'es' ? '/enlaces-utiles' : '/useful-links')}>{locale === 'es' ? 'Enlaces útiles' : 'Useful links'}</a>
+        </div>
+      </div>
+      <a href={localizedPath(locale, locale === 'es' ? '/contacto' : '/contact')}>{labels.navContact}</a>
+      <span class="header-socials" aria-label="Social links">
+        <a href={settings.social.instagram} aria-label="Instagram">&#9678;</a>
+        <a href={settings.social.facebook} aria-label="Facebook">f</a>
+      </span>
+      <a class="language-switch" href={localizedPath(otherLocale, '/')}>{otherLocale.toUpperCase()}</a>
+    </nav>
+    <div class="mobile-actions">
+      <details class="mobile-menu">
+        <summary aria-label="Open menu">&#9776;</summary>
+        <div class="mobile-panel">
+          <a href={localizedPath(locale, locale === 'es' ? '/nuestra-escuela' : '/our-school')}>{labels.navAbout}</a>
+          <a href={localizedPath(locale, locale === 'es' ? '/actividades-extraescolares' : '/extracurricular-activities')}>{locale === 'es' ? 'Otros programas' : 'Other programs'}</a>
+          <a href={localizedPath(locale, locale === 'es' ? '/comunidad' : '/community')}>{labels.navBlog}</a>
+          <a href={localizedPath(locale, locale === 'es' ? '/contacto' : '/contact')}>{locale === 'es' ? 'Admisiones' : 'Admissions'}</a>
+          <a href={localizedPath(locale, locale === 'es' ? '/contacto' : '/contact')}>{labels.navContact}</a>
+          <a href={settings.social.instagram}>Instagram</a>
+          <a href={settings.social.facebook}>Facebook</a>
+          <a href={localizedPath(otherLocale, '/')}>{otherLocale.toUpperCase()}</a>
+        </div>
+      </details>
+      <a class="mobile-social" href={settings.social.instagram} aria-label="Instagram">&#9678;</a>
+      <a class="mobile-social" href={settings.social.facebook} aria-label="Facebook">f</a>
+    </div>
+  </div>
+</header>
