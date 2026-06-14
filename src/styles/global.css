@@ -25,6 +25,7 @@ body {
   margin: 0;
   min-width: 320px;
   line-height: 1.6;
+  overflow-x: hidden;
 }
 
 img {
@@ -1700,6 +1701,22 @@ p {
 }
 
 @media (max-width: 1024px) {
+  html,
+  body {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
+  main,
+  .site-header,
+  .hero,
+  .section {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
   .nav {
     min-height: 80px;
     align-items: center;
@@ -1777,6 +1794,21 @@ p {
 
   .hero {
     min-height: 620px;
+  }
+
+  .home-two-column {
+    display: block;
+  }
+
+  .home-why-copy,
+  .home-essence-card {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  .home-essence-card {
+    margin-top: 2.4rem;
   }
 
   .split,
@@ -1871,21 +1903,141 @@ p {
 }
 
 @media (max-width: 560px) {
+  html,
+  body {
+    overflow-x: hidden;
+  }
+
   .container,
   .hero-content {
-    width: min(100% - 24px, 1120px);
+    width: min(100% - 28px, 1120px);
+  }
+
+  .site-header {
+    position: sticky;
+  }
+
+  .nav {
+    min-height: 90px;
+    gap: 0.5rem;
+  }
+
+  .brand {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  .brand img {
+    width: clamp(170px, 52vw, 212px);
+  }
+
+  .mobile-actions {
+    flex: 0 0 auto;
+    gap: 0.48rem;
+  }
+
+  .mobile-menu summary {
+    width: 36px;
+    height: 36px;
+    font-size: 2.05rem;
+  }
+
+  .mobile-social {
+    width: 40px;
+    height: 40px;
+  }
+
+  .mobile-panel {
+    right: 0;
+    top: calc(100% + 12px);
+    max-width: calc(100vw - 28px);
   }
 
   .hero {
-    min-height: 560px;
+    min-height: calc(100svh - 90px);
+    align-items: center;
+  }
+
+  .hero-slide {
+    background-position: center center;
+  }
+
+  .hero-content {
+    padding: 2rem 0 2.7rem;
+    text-align: center;
   }
 
   .hero h1 {
-    font-size: clamp(3.05rem, 14vw, 4.2rem);
+    max-width: 100%;
+    font-size: clamp(2.42rem, 12.7vw, 3.45rem);
+    line-height: 1.17;
+    overflow-wrap: anywhere;
+  }
+
+  .hero h1 b {
+    font-size: clamp(2.72rem, 14.2vw, 3.8rem);
+    line-height: 1.05;
+  }
+
+  .hero p {
+    max-width: 34ch;
+    font-size: 1rem;
+    line-height: 1.45;
+  }
+
+  .hero-scroll {
+    margin-top: 1.95rem;
   }
 
   .section {
     padding: 54px 0;
+  }
+
+  .home-why {
+    padding: 46px 0 56px;
+  }
+
+  .home-two-column {
+    display: block;
+  }
+
+  .home-essence-card {
+    margin-top: 2rem;
+  }
+
+  .home-why .section-header {
+    margin-bottom: 1.2rem;
+  }
+
+  .home-why h2,
+  .home-essence-card h2,
+  .home-nature h2 {
+    max-width: 100%;
+    font-size: clamp(1.8rem, 9vw, 2.35rem);
+    line-height: 1.08;
+  }
+
+  .home-why p,
+  .home-essence-card p,
+  .home-nature p {
+    max-width: 100%;
+    overflow-wrap: break-word;
+  }
+
+  .highlight-grid {
+    gap: 0.65rem;
+  }
+
+  .highlight {
+    align-items: flex-start;
+    min-height: 0;
+    font-size: 0.98rem;
+    line-height: 1.35;
+  }
+
+  .home-essence-card .feature-image {
+    aspect-ratio: 1.25 / 1;
+    border-radius: 16px;
   }
 
   .admissions-process-page,
@@ -1925,6 +2077,22 @@ p {
   .team-grid,
   .post-grid {
     grid-template-columns: 1fr;
+  }
+
+  .home-team-carousel {
+    width: 100%;
+    margin-left: 0;
+    padding: 0 14px 1.75rem;
+    transform: none;
+  }
+
+  .home-team-carousel .person {
+    flex-basis: min(78vw, 315px);
+  }
+
+  .team-carousel-dots {
+    max-width: 100%;
+    overflow: hidden;
   }
 
   .home-model-image-wrap img {

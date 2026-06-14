@@ -28,11 +28,14 @@ const canonical = meta.canonicalUrl ?? new URL(path, Astro.site ?? 'https://mamm
 <html lang={normalizedLocale}>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="generator" content={Astro.generator} />
     <title>{meta.title}</title>
     <meta name="description" content={meta.description} />
     <link rel="canonical" href={canonical} />
+    <link rel="icon" href="/images/logo-square.jpg" sizes="32x32" />
+    <link rel="icon" href="/images/logo-square.jpg" sizes="192x192" />
+    <link rel="apple-touch-icon" href="/images/logo-square.jpg" />
     <meta property="og:type" content="website" />
     <meta property="og:title" content={meta.ogTitle ?? meta.title} />
     <meta property="og:description" content={meta.ogDescription ?? meta.description} />
