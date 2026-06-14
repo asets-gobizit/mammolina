@@ -2,6 +2,14 @@ import { sanityClient } from 'sanity:client';
 import type { BlogPost, HomePage, Page, Person, SeoData, Service, SiteSettings } from './types';
 
 const imageProjection = `"image": image.asset->url`;
+const bodyTextProjection = `{
+  "es": body[].children[].text,
+  "en": body[].children[].text
+}`;
+const detailsTextProjection = `{
+  "es": details[].children[].text,
+  "en": details[].children[].text
+}`;
 const seoProjection = `{
   "title": coalesce(title, ^.title.es),
   description,
@@ -32,7 +40,7 @@ export const sanityProvider = {
       "slug": slug.current,
       title,
       summary,
-      "body": {"es": [], "en": []},
+      "body": ${bodyTextProjection},
       "heroImage": heroImage.asset->url,
       "seo": {"es": seo ${seoProjection}, "en": seo ${seoProjection}}
     }`, { slug });
@@ -43,7 +51,7 @@ export const sanityProvider = {
       title,
       ageRange,
       summary,
-      "details": {"es": [], "en": []},
+      "details": ${detailsTextProjection},
       ${imageProjection},
       "seo": {"es": seo ${seoProjection}, "en": seo ${seoProjection}}
     }`);
@@ -54,7 +62,7 @@ export const sanityProvider = {
       title,
       ageRange,
       summary,
-      "details": {"es": [], "en": []},
+      "details": ${detailsTextProjection},
       ${imageProjection},
       "seo": {"es": seo ${seoProjection}, "en": seo ${seoProjection}}
     }`, { slug });
@@ -65,7 +73,7 @@ export const sanityProvider = {
       title,
       publishedAt,
       excerpt,
-      "body": {"es": [], "en": []},
+      "body": ${bodyTextProjection},
       ${imageProjection},
       "seo": {"es": seo ${seoProjection}, "en": seo ${seoProjection}}
     }`);
@@ -76,7 +84,7 @@ export const sanityProvider = {
       title,
       publishedAt,
       excerpt,
-      "body": {"es": [], "en": []},
+      "body": ${bodyTextProjection},
       ${imageProjection},
       "seo": {"es": seo ${seoProjection}, "en": seo ${seoProjection}}
     }`, { slug });
