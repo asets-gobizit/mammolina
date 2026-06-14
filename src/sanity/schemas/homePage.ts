@@ -16,6 +16,10 @@ export const homePage = defineType({
       type: 'array',
       of: [{ type: 'localizedString' }]
     }),
+    defineField({ name: 'essenceTitle', title: 'Essence title', type: 'localizedString' }),
+    defineField({ name: 'essenceBody', title: 'Essence body', type: 'localizedText' }),
+    defineField({ name: 'outdoorTitle', title: 'Outdoor title', type: 'localizedString' }),
+    defineField({ name: 'outdoorBody', title: 'Outdoor body', type: 'localizedText' }),
     defineField({ name: 'seo', title: 'SEO', type: 'seo' })
   ]
 });

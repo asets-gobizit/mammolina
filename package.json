@@ -8,6 +8,7 @@
     "build": "node scripts/check-project-size.mjs && astro build",
     "preview": "astro preview",
     "astro": "astro",
+    "sanity:import-seed": "node scripts/import-seed-to-sanity.mjs",
     "sanity:deploy": "sanity deploy",
     "size:check": "node scripts/check-project-size.mjs"
   },
